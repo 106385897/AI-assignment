@@ -1,46 +1,58 @@
 
 import heapq
+import math
 from itertools import count
-from informed_search import heuristic
 
 
-def astar(nodes, edges, origin, destinations):
-    # Create a directed weighted graph
-    graph = {node_id: [] for node_id in nodes}
+def astar(nodes, graph, origin, destinations):
+    # Find a safe scale for the Euclidean heuristic
+    # This helps prevent the heuristic from overestimating costs
+    scale = float("inf")
 
-    for (source, target), cost in edges.items():
-        graph[source].append((target, cost))
+    for source, neighbors in graph.items():
+        for target, edge_cost in neighbors:
+            x1, y1 = nodes[source]
+            x2, y2 = nodes[target]
 
-    # Sort neighbors in ascending order
-    for node_id in graph:
-        graph[node_id].sort(key=lambda edge: edge[0])
+            distance = math.hypot(x2 - x1, y2 - y1)
+
+            if distance > 0:
+                scale = min(scale, edge_cost / distance)
+
+    if scale == float("inf"):
+        scale = 0
+
+    def heuristic(node):
+        x1, y1 = nodes[node]
+
+        return scale * min(
+            math.hypot(nodes[goal][0] - x1, nodes[goal][1] - y1)
+            for goal in destinations
+        )
 
     # Priority queue stores:
-    # (f_cost, insertion_order, node, g_cost, path)
+    # (f_cost, node_id, insertion_order, g_cost, path)
     frontier = []
     insertion_order = count()
 
-    # Starting node has a path cost of zero
-    start_g = 0
-    start_h = heuristic(origin, destinations, nodes)
+    start_h = heuristic(origin)
 
     heapq.heappush(
         frontier,
-        (start_g + start_h, next(insertion_order),
-         origin, start_g, [origin])
+        (start_h, origin, next(insertion_order), 0, [origin])
     )
 
     nodes_created = 1
 
-    # Remember the cheapest known cost to each state
+    # Store the cheapest known path cost to each node
     best_cost = {origin: 0}
 
     while frontier:
-        current_f, order, current, current_g, path = heapq.heappop(
+        current_f, current, order, current_g, path = heapq.heappop(
             frontier
         )
 
-        # Ignore outdated queue entries
+        # Skip an outdated entry
         if current_g > best_cost.get(current, float("inf")):
             continue
 
@@ -52,15 +64,15 @@ def astar(nodes, edges, origin, destinations):
                 "path": path
             }
 
-        # Explore outgoing edges
-        for neighbor, edge_cost in graph.get(current, []):
+        # Explore neighbours in ascending node order
+        for neighbor, edge_cost in sorted(graph.get(current, [])):
             new_g = current_g + edge_cost
 
-            # Only consider a cheaper route to this node
+            # Only add a better route to the frontier
             if new_g < best_cost.get(neighbor, float("inf")):
                 best_cost[neighbor] = new_g
 
-                new_h = heuristic(neighbor, destinations, nodes)
+                new_h = heuristic(neighbor)
                 new_f = new_g + new_h
                 new_path = path + [neighbor]
 
@@ -68,8 +80,8 @@ def astar(nodes, edges, origin, destinations):
                     frontier,
                     (
                         new_f,
-                        next(insertion_order),
                         neighbor,
+                        next(insertion_order),
                         new_g,
                         new_path
                     )
@@ -77,4 +89,9 @@ def astar(nodes, edges, origin, destinations):
 
                 nodes_created += 1
 
-    return None
+    # No destination found
+    return {
+        "goal": None,
+        "nodes_created": nodes_created,
+        "path": []
+    }

@@ -4,32 +4,27 @@ from itertools import count
 from informed_search import heuristic
 
 
-def gbfs(nodes, edges, origin, destinations):
-    # Convert directed edges into an adjacency list
-    graph = {node_id: [] for node_id in nodes}
-
-    for (source, target), cost in edges.items():
-        graph[source].append((target, cost))
-
-    for node_id in graph:
-        graph[node_id].sort(key=lambda edge: edge[0])
-
-    # Priority queue: (heuristic, insertion order, node, path)
+def gbfs(nodes, graph, origin, destinations):
+    # Priority queue for GBFS
     frontier = []
     insertion_order = count()
 
+    # Add the starting node
     start_h = heuristic(origin, destinations, nodes)
+
     heapq.heappush(
         frontier,
-        (start_h, next(insertion_order), origin, [origin])
+        (start_h, origin, next(insertion_order), [origin])
     )
 
+    # Count the origin as the first created node
     nodes_created = 1
 
     while frontier:
-        current_h, order, current, path = heapq.heappop(frontier)
+        # Get the node with the smallest heuristic
+        current_h, current, order, path = heapq.heappop(frontier)
 
-        # Stop when a destination is reached
+        # Check if the current node is a destination
         if current in destinations:
             return {
                 "goal": current,
@@ -37,25 +32,31 @@ def gbfs(nodes, edges, origin, destinations):
                 "path": path
             }
 
-        # Expand neighbors in ascending node order
-        for neighbor, cost in graph.get(current, []):
-            # Prevent cycles along the current search path
+        # Explore neighbours in ascending node order
+        for neighbor, cost in sorted(graph.get(current, [])):
+            # Avoid going back to a node already in this path
             if neighbor in path:
                 continue
 
             new_path = path + [neighbor]
-            neighbor_h = heuristic(neighbor, destinations, nodes)
+            new_h = heuristic(neighbor, destinations, nodes)
 
             heapq.heappush(
                 frontier,
                 (
-                    neighbor_h,
-                    next(insertion_order),
+                    new_h,
                     neighbor,
+                    next(insertion_order),
                     new_path
                 )
             )
 
+            # Count every node added to the frontier
             nodes_created += 1
 
-    return None
+    # No destination found
+    return {
+        "goal": None,
+        "nodes_created": nodes_created,
+        "path": []
+    }
