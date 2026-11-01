@@ -1,0 +1,39 @@
+tests/PathFinder-test.txt DFS
+5 7
+2 1 3 5
+Error: unknown or unfinished method BFS
+Error: unknown or unfinished method GBFS
+Error: unknown or unfinished method AS
+Error: unknown or unfinished method CUS1
+Error: unknown or unfinished method CUS2
+tests/test01.txt DFS
+1 1
+1
+Error: unknown or unfinished method BFS
+Error: unknown or unfinished method GBFS
+Error: unknown or unfinished method AS
+Error: unknown or unfinished method CUS1
+Error: unknown or unfinished method CUS2
+tests/test02.txt DFS
+No goal found 3
+Error: unknown or unfinished method BFS
+Error: unknown or unfinished method GBFS
+Error: unknown or unfinished method AS
+Error: unknown or unfinished method CUS1
+Error: unknown or unfinished method CUS2
+tests/test03.txt DFS
+5 5
+1 2 3 5
+Error: unknown or unfinished method BFS
+Error: unknown or unfinished method GBFS
+Error: unknown or unfinished method AS
+Error: unknown or unfinished method CUS1
+Error: unknown or unfinished method CUS2
+tests/test04.txt DFS
+10 7
+1 2 4 7 10
+Error: unknown or unfinished method BFS
+Error: unknown or unfinished method GBFS
+Error: unknown or unfinished method AS
+Error: unknown or unfinished method CUS1
+Error: unknown or unfinished method CUS2
