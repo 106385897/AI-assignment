@@ -1,19 +1,19 @@
 import sys
 from dfs import dfs
 # Teammates add their imports here, for example:
-# from bfs import bfs
+from bfs import bfs
 # from gbfs import gbfs
 # from astar import astar
-# from cus1 import cus1
+from cus1 import cus1
 # from cus2 import cus2
 
 # Teammates add one line each here
 METHODS = {
     "DFS": dfs,
-    # "BFS": bfs,
+    "BFS": bfs,
     # "GBFS": gbfs,
     # "AS": astar,
-    # "CUS1": cus1,
+    "CUS1": cus1,
     # "CUS2": cus2,
 }
 
