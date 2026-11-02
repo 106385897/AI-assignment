@@ -5,11 +5,12 @@ from informed_search import heuristic
 
 
 def gbfs(nodes, graph, origin, destinations):
-    # Priority queue for GBFS
+    # GBFS selects the node with the smallest estimated
+    # straight-line distance to a destination.
     frontier = []
     insertion_order = count()
 
-    # Add the starting node
+    # Add the starting node to the priority queue.
     start_h = heuristic(origin, destinations, nodes)
 
     heapq.heappush(
@@ -17,14 +18,15 @@ def gbfs(nodes, graph, origin, destinations):
         (start_h, origin, next(insertion_order), [origin])
     )
 
-    # Count the origin as the first created node
+    # The origin counts as the first created node.
     nodes_created = 1
 
     while frontier:
-        # Get the node with the smallest heuristic
+        # Remove the node with the lowest heuristic value.
+        # Node ID and insertion order are used for tie-breaking.
         current_h, current, order, path = heapq.heappop(frontier)
 
-        # Check if the current node is a destination
+        # Return the result when a destination is reached.
         if current in destinations:
             return {
                 "goal": current,
@@ -32,15 +34,17 @@ def gbfs(nodes, graph, origin, destinations):
                 "path": path
             }
 
-        # Explore neighbours in ascending node order
+        # Explore neighbours in ascending node ID order.
         for neighbor, cost in sorted(graph.get(current, [])):
-            # Avoid going back to a node already in this path
+
+            # Avoid cycles within the current path.
             if neighbor in path:
                 continue
 
             new_path = path + [neighbor]
             new_h = heuristic(neighbor, destinations, nodes)
 
+            # Add the new path to the priority queue.
             heapq.heappush(
                 frontier,
                 (
@@ -51,12 +55,12 @@ def gbfs(nodes, graph, origin, destinations):
                 )
             )
 
-            # Count every node added to the frontier
+            # Count every new node added to the frontier.
             nodes_created += 1
 
-    # No destination found
+    # Return None for the path if no destination is reachable.
     return {
         "goal": None,
         "nodes_created": nodes_created,
-        "path": []
+        "path": None
     }
