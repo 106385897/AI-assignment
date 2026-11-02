@@ -6,11 +6,11 @@ def distance(p, q):
     return math.sqrt((p[0] - q[0]) **2 + (p[1] - q[1]) **2)    #using Pythagoras
 
 
-def longest_edge(nodes, edges):
+def longest_edge(nodes, graph):
     """L_max: the longest straight-line length of any edge"""
     longest = 0
-    for start in edges:                       # every node...
-        for end, cost in edges[start]:        # ...and every edge leaving it
+    for start in graph:                       # every node...
+        for end, cost in graph[start]:        # ...and every edge leaving it
             d = distance(nodes[start], nodes[end])
             if d > longest:
                 longest = d
@@ -27,8 +27,8 @@ def heuristic(node, nodes, destinations, l_max):
     return math.ceil(nearest/l_max)    #divide and round up
 
 
-def cus2(nodes, edges, origin, destinations):  # four variables as inputs from step 1
-    l_max = longest_edge(nodes, edges)  # longest one-move distance, needed by the heuristic
+def cus2(nodes, graph, origin, destinations):  # four variables as inputs from step 1
+    l_max = longest_edge(nodes, graph)  # longest one-move distance, needed by the heuristic
     frontier = []
     heapq.heappush(frontier, (heuristic(origin, nodes, destinations, l_max), origin, 0, [origin]))  
     nodes_created = 1  # the origin was first node created so count starts at 1
@@ -46,7 +46,7 @@ def cus2(nodes, edges, origin, destinations):  # four variables as inputs from s
 
         explored.add(node)  # mark node as checked
 
-        for neighbour, cost in edges.get(node, []):  # loop through departures; cost unused because CUS2 counts moves
+        for neighbour, cost in graph.get(node, []):  # loop through departures; cost unused because CUS2 counts moves
             new_g = g + 1  # moves to reach neighbour = parent's g + 1
             if neighbour in explored:  # if neighbour checked, skip it
                 continue
