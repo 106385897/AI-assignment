@@ -4,8 +4,8 @@ from dfs import dfs
 from bfs import bfs
 # from gbfs import gbfs
 # from astar import astar
-from cus1 import cus1
-# from cus2 import cus2
+# from cus1 import cus1
+from cus2 import cus2
 
 # Teammates add one line each here
 METHODS = {
@@ -15,6 +15,8 @@ METHODS = {
     # "AS": astar,
     "CUS1": cus1,
     # "CUS2": cus2,
+    # "CUS1": cus1,
+    "CUS2": cus2,
 }
 
 
