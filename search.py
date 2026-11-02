@@ -6,6 +6,7 @@ from astar import astar
 from cus1 import cus1
 from cus2 import cus2
 
+# Maps the command-line method name to its search function
 METHODS = {
     "DFS": dfs,
     "GBFS": gbfs,
@@ -17,6 +18,7 @@ METHODS = {
 
 
 def read_file(filename):
+    # Parse a problem file into nodes, edges, origin and destinations.
     nodes = {}
     edges = {}
     origin = None
@@ -29,6 +31,7 @@ def read_file(filename):
             if line == "":
                 continue
 
+            # Section keywords switch the current section
             if line.lower() == "nodes:":
                 section = "nodes"
             elif line.lower() == "edges:":
@@ -72,19 +75,22 @@ def build_graph(edges):
         if a not in graph:
             graph[a] = []
         graph[a].append((b, cost))
+        # Sort ascending so every search expands smaller nodes first
     for a in graph:
         graph[a].sort()
     return graph
 
 
 def main():
+    # Expect exactly: python search.py <filename> <method>
     if len(sys.argv) != 3:
         print("Usage: python search.py <filename> <method>")
         return
 
     filename = sys.argv[1]
-    method = sys.argv[2].upper()
+    method = sys.argv[2].upper() # accept lowercase method names
 
+    # Handle a missing file or a badly formatted file without crashing
     try:
         nodes, edges, origin, destinations = read_file(filename)
     except FileNotFoundError:
@@ -101,6 +107,7 @@ def main():
     graph = build_graph(edges)
     result = METHODS[method](nodes, graph, origin, destinations)
 
+    # Output format: filename method / goal nodes_created / path
     print(filename, method)
     if result["goal"] is None:
         print("No goal found", result["nodes_created"])
