@@ -21,6 +21,8 @@ def heuristic(node, nodes, destinations, l_max):
     """Fewest moves we could possibly still need from this node"""
     if node in destinations:
         return 0
+    if l_max == 0:
+        return 0
     nearest = min(distance(nodes[node], nodes[d]) for d in destinations)
     return math.ceil(nearest/l_max)    #divide and round up
 
